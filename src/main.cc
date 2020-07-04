@@ -24,5 +24,5 @@ int main()
          img.SetPixel({ir, ig, ib}, x, y);
       }
    }
-   gfx::WriteImage(img, "test.ppm");
+   gfx::WriteImagePPM(img, "test.ppm");
 }

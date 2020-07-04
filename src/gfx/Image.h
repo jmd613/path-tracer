@@ -4,9 +4,12 @@
 #include <string>
 #include <vector>
 
-#include "Pixel.h"
-
 namespace gfx {
+
+struct Pixel
+{
+   uint8_t r, g, b;
+};
 
 // TODO: Determine coordinate system (currently top-right is 0,0)
 
@@ -45,6 +48,6 @@ private:
    const size_t width_, height_;
 };
 
-void WriteImage(const Image &img, const std::string &path);
+void WriteImagePPM(const Image &img, const std::string &path);
 
 }   // namespace gfx

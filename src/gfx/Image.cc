@@ -10,7 +10,7 @@ Image::Image(size_t width, size_t height) :
    height_(height)
 {}
 
-void WriteImage(const Image &img, const std::string &path)
+void WriteImagePPM(const Image &img, const std::string &path)
 {
    std::ofstream file;
    file.open(path, std::ofstream::trunc);
