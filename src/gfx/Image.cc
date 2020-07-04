@@ -1,10 +1,12 @@
 #include "Image.h"
 
 #include <fstream>
+#include <utility>
+
+namespace gfx {
 
 Image::Image(std::string path, size_t width, size_t height) :
-   path_(std::move(path)),
-   pixels_(std::vector<math::Vec3>(width * height, math::Vec3())),
+   path_(std::move(path)), pixels_(std::vector<Pixel>(width * height, Pixel())),
    width_(width), height_(height)
 {}
 
@@ -21,18 +23,19 @@ Image::~Image()
       for (int x = 0; x < width_; ++x)
       {
          auto &color = GetColor(x, y);
-         file << color.GetX() << ' ' << color.GetY() << ' ' << color.GetZ()
-              << '\n';
+         file << +color.r << ' ' << +color.g << ' ' << +color.b << '\n';
       }
    }
 }
 
-void Image::SetPixel(const math::Vec3 &color, size_t x, size_t y)
+void Image::SetPixel(const Pixel &color, size_t x, size_t y)
 {
    pixels_.at(width_ * y + x) = color;
 }
 
-const math::Vec3 &Image::GetColor(size_t x, size_t y) const
+const Pixel &Image::GetColor(size_t x, size_t y) const
 {
    return pixels_.at(width_ * y + x);
 }
+
+}   // namespace gfx
