@@ -17,29 +17,109 @@ public:
    double Length() const;
 
    Vec3 Normal() const;
-   constexpr Vec3 Cross(const Vec3 &other) const;
-   constexpr double Dot(const Vec3 &other) const;
 
-   constexpr Vec3 operator+(const Vec3 &other) const;
-   constexpr Vec3 &operator+=(const Vec3 &other);
+   constexpr Vec3 Cross(const Vec3 &other) const
+   {
+      double x = (y_ * other.z_) + (z_ * other.y_);
+      double y = (z_ * other.x_) + (x_ * other.z_);
+      double z = (x_ * other.y_) + (y_ * other.x_);
+      return {x, y, z};
+   }
 
-   constexpr Vec3 operator-() const;   // Negation Operator
-   constexpr Vec3 operator-(const Vec3 &other) const;
-   constexpr Vec3 &operator-=(const Vec3 &other);
+   constexpr double Dot(const Vec3 &other) const
+   {
+      double x = x_ * other.x_;
+      double y = y_ * other.y_;
+      double z = z_ * other.z_;
+      return x + y + z;
+   }
 
-   constexpr Vec3 operator*(const Vec3 &other) const;
-   constexpr Vec3 &operator*=(const Vec3 &other);
+   constexpr Vec3 operator+(const Vec3 &other) const
+   {
+      return {x_ + other.x_, y_ + other.y_, z_ + other.z_};
+   }
 
-   friend constexpr Vec3 operator*(double val, const Vec3 &vec);
-   constexpr Vec3 operator*(double val) const;
-   constexpr Vec3 &operator*=(double val);
+   constexpr Vec3 &operator+=(const Vec3 &other)
+   {
+      x_ += other.x_;
+      y_ += other.y_;
+      z_ += other.z_;
+      return *this;
+   }
 
-   friend constexpr Vec3 operator/(double val, const Vec3 &vec);
-   constexpr Vec3 operator/(double val) const;
-   constexpr Vec3 &operator/=(double val);
+   constexpr Vec3 operator-() const { return {-x_, -y_, -z_}; }
 
-   constexpr bool operator==(const Vec3 &other) const;
-   constexpr bool operator!=(const Vec3 &other) const;
+   constexpr Vec3 operator-(const Vec3 &other) const
+   {
+      return {x_ - other.x_, y_ - other.y_, z_ - other.z_};
+   }
+
+   constexpr Vec3 &operator-=(const Vec3 &other)
+   {
+      x_ -= other.x_;
+      y_ -= other.y_;
+      z_ -= other.z_;
+      return *this;
+   }
+
+   constexpr Vec3 operator*(const Vec3 &other) const
+   {
+      return {x_ * other.x_, y_ * other.y_, z_ * other.z_};
+   }
+
+   constexpr Vec3 &operator*=(const Vec3 &other)
+   {
+      x_ *= other.x_;
+      y_ *= other.y_;
+      z_ *= other.z_;
+      return *this;
+   }
+
+   friend constexpr Vec3 operator*(double val, const Vec3 &vec)
+   {
+      return {val * vec.x_, val * vec.y_, val * vec.z_};
+   }
+
+   constexpr Vec3 operator*(double val) const
+   {
+      return {val * x_, val * y_, val * z_};
+   }
+
+   constexpr Vec3 &operator*=(double val)
+   {
+      x_ *= val;
+      y_ *= val;
+      z_ *= val;
+      return *this;
+   }
+
+   friend constexpr Vec3 operator/(double val, const Vec3 &vec)
+   {
+      return {val / vec.x_, val / vec.y_, val / vec.z_};
+   }
+
+   constexpr Vec3 operator/(double val) const
+   {
+      return {x_ / val, y_ / val, z_ / val};
+   }
+
+   constexpr Vec3 &operator/=(double val)
+   {
+      x_ /= val;
+      y_ /= val;
+      z_ /= val;
+      return *this;
+   }
+
+   constexpr bool operator==(const Vec3 &other) const
+   {
+      return (x_ == other.x_) && (y_ == other.y_) && (z_ == other.z_);
+   }
+
+   constexpr bool operator!=(const Vec3 &other) const
+   {
+      return !((x_ == other.x_) && (y_ == other.y_) && (z_ == other.z_));
+   }
 
    friend std::ostream &operator<<(std::ostream &os, const Vec3 &vec3);
 
