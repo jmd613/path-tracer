@@ -5,37 +5,30 @@
 
 namespace gfx {
 
-Image::Image(std::string path, size_t width, size_t height) :
-   path_(std::move(path)), pixels_(std::vector<Pixel>(width * height, Pixel())),
+Image::Image(size_t width, size_t height) :
+   pixels_(std::vector<Pixel>(width * height, Pixel())),
    width_(width), height_(height)
 {}
 
-Image::~Image()
+void WriteImage(const Image& img, const std::string &path)
 {
    std::ofstream file;
-   file.open(path_, std::ofstream::trunc);
+   file.open(path, std::ofstream::trunc);
+
+   auto width = img.GetWidth();
+   auto height = img.GetHeight();
 
    // PPM Header
-   file << "P3\n" << width_ << ' ' << height_ << "\n255\n";
+   file << "P3\n" << width << ' ' << height << "\n255\n";
 
-   for (int y = height_ - 1; y >= 0; --y)
+   for (size_t y = 0; y < height; ++y)
    {
-      for (int x = 0; x < width_; ++x)
+      for (size_t x = 0; x < width; ++x)
       {
-         auto &color = GetColor(x, y);
+         auto &color = img.GetColor(x, y);
          file << +color.r << ' ' << +color.g << ' ' << +color.b << '\n';
       }
    }
-}
-
-void Image::SetPixel(const Pixel &color, size_t x, size_t y)
-{
-   pixels_.at(width_ * y + x) = color;
-}
-
-const Pixel &Image::GetColor(size_t x, size_t y) const
-{
-   return pixels_.at(width_ * y + x);
 }
 
 }   // namespace gfx
