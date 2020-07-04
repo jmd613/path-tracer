@@ -4,10 +4,19 @@
 #include <string>
 #include <vector>
 
+#include "Vec3.h"
+
 namespace gfx {
 
+// TOOD: Do something better than just wrapping a vector
 struct Pixel
 {
+   Pixel() = default;
+   constexpr Pixel(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
+   explicit constexpr Pixel(const math::Vec3 &vec) :
+      r(vec.GetX()), g(vec.GetY()), b(vec.GetZ())
+   {}
+
    uint8_t r, g, b;
 };
 
