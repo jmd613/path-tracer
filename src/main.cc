@@ -1,21 +1,31 @@
 #include <limits>
+#include <memory>
+#include <random>
+#include <numeric>
 
 #include "Image.h"
 #include "Ray.h"
-#include "Vec3.h"
+#include "Scene.h"
 #include "Sphere.h"
+#include "Vec3.h"
 
 using namespace math;
 using namespace gfx;
 
-Pixel RayColor(const Ray &ray)
+double RandomDouble()
 {
-   auto s = Sphere({0, 0 , -1}, 0.5);
-   if (auto hit = s.Hit(ray, 0, std::numeric_limits<double>::infinity()))
+   static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+   static std::mt19937 generator;
+   return distribution(generator);
+}
+
+Vec3 RayColor(const Ray &ray, const IHittable &scene)
+{
+   if (auto hit = scene.Hit(ray, 0, std::numeric_limits<double>::infinity()))
    {
       auto norm = hit->normal;
       auto vec = 255 * Vec3(norm.GetX() + 1, norm.GetY() + 1, norm.GetZ() + 1);
-      return Pixel(0.5 * vec);
+      return Vec3(0.5 * vec);
    }
 
    auto normal = ray.GetDirection().Normal();
@@ -25,13 +35,13 @@ Pixel RayColor(const Ray &ray)
    constexpr auto BLUE = Vec3{1, 1, 1};
 
    auto val = (1.0 - y_length) * BLUE + y_length * RED;
-   return Pixel(val * 255);
+   return Vec3(val * 255);
 }
 
 int main()
 {
-   constexpr size_t IMG_WIDTH = 640u;
-   constexpr size_t IMG_HEIGHT = 480u ;
+   constexpr size_t IMG_WIDTH = 640;
+   constexpr size_t IMG_HEIGHT = 480u;
    constexpr double ASPECT_RATIO = static_cast<double>(IMG_WIDTH) / IMG_HEIGHT;
 
    constexpr double VIEWPORT_HEIGHT = 2.0;
@@ -45,16 +55,32 @@ int main()
                                          (VERTICAL_VP / 2) -
                                          Vec3{0, 0, FOCAL_LENGTH};
 
+   constexpr size_t SAMPLES_PER_PIXEL = 100;
+
+   Scene scene;
+   scene.add(std::make_unique<Sphere>(Vec3(0, 0, -1), 0.5));
+   scene.add(std::make_unique<Sphere>(Vec3(0, -100.5, -1), 100));
+
    Image img(IMG_WIDTH, IMG_HEIGHT);
    for (size_t y = 0; y < IMG_HEIGHT; ++y)
    {
       for (size_t x = 0; x < IMG_WIDTH; ++x)
       {
-         auto u = static_cast<double>(x) / (IMG_WIDTH - 1);
-         auto v = static_cast<double>(IMG_HEIGHT - y - 1) / (IMG_HEIGHT - 1);
-         auto ray = Ray(ORIGIN, LOWER_LEFT_CORNER_VP + (u * HORIZONTAL_VP) +
+         std::vector<Vec3> pix_samples;
+         pix_samples.reserve(SAMPLES_PER_PIXEL);
+         for (size_t samples = 0; samples < SAMPLES_PER_PIXEL; ++samples)
+         {
+            auto u = static_cast<double>(x + RandomDouble()) / (IMG_WIDTH - 1);
+            auto v = static_cast<double>(IMG_HEIGHT - y - 1 + RandomDouble()) / (IMG_HEIGHT - 1);
+            auto ray = Ray(ORIGIN, LOWER_LEFT_CORNER_VP + (u * HORIZONTAL_VP) +
                                    (v * VERTICAL_VP) - ORIGIN);
-         auto pixel = RayColor(ray);
+            pix_samples.push_back(RayColor(ray, scene));
+         }
+
+         auto vec_pix = std::accumulate(pix_samples.begin(), pix_samples.end(), Vec3());
+         vec_pix /= SAMPLES_PER_PIXEL;
+         auto pixel = Pixel(vec_pix);
+
          img.SetPixel(pixel, x, y);
       }
    }
