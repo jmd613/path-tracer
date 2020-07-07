@@ -6,17 +6,14 @@
 class Camera
 {
 public:
-   Camera()
+   Camera(size_t img_width, size_t img_height)
    {
       using math::Vec3;
-      constexpr size_t IMG_WIDTH = 640;
-      constexpr size_t IMG_HEIGHT = 480u;
-      constexpr double ASPECT_RATIO =
-         static_cast<double>(IMG_WIDTH) / IMG_HEIGHT;
+      double ar = static_cast<double>(img_width) / img_height;
 
-      constexpr double VIEWPORT_HEIGHT = 2.0;
-      constexpr double VIEWPORT_WIDTH = ASPECT_RATIO * VIEWPORT_HEIGHT;
-      constexpr double FOCAL_LENGTH = 1.0;
+      double VIEWPORT_HEIGHT = 2.0;
+      double VIEWPORT_WIDTH = ar * VIEWPORT_HEIGHT;
+      double FOCAL_LENGTH = 1.0;
 
       origin_ = Vec3{0, 0, 0};
       horizontal_vp_ = Vec3{VIEWPORT_WIDTH, 0, 0};
@@ -27,8 +24,8 @@ public:
 
    math::Ray GetRay(double u, double v) const
    {
-      return math::Ray(origin_, lower_left_corner_vp + u * horizontal_vp_ +
-                             v * vertical_vp_ - origin_);
+      return math::Ray(origin_, lower_left_corner_vp + (u * horizontal_vp_) +
+                                   (v * vertical_vp_) - origin_);
    }
 
 private:
