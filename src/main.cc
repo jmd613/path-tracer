@@ -3,6 +3,7 @@
 #include <random>
 #include <numeric>
 
+#include "Camera.h"
 #include "Image.h"
 #include "Ray.h"
 #include "Scene.h"
@@ -42,18 +43,7 @@ int main()
 {
    constexpr size_t IMG_WIDTH = 640;
    constexpr size_t IMG_HEIGHT = 480u;
-   constexpr double ASPECT_RATIO = static_cast<double>(IMG_WIDTH) / IMG_HEIGHT;
-
-   constexpr double VIEWPORT_HEIGHT = 2.0;
-   constexpr double VIEWPORT_WIDTH = ASPECT_RATIO * VIEWPORT_HEIGHT;
-   constexpr double FOCAL_LENGTH = 1.0;
-
-   constexpr auto ORIGIN = Vec3{0, 0, 0};
-   constexpr auto HORIZONTAL_VP = Vec3{VIEWPORT_WIDTH, 0, 0};
-   constexpr auto VERTICAL_VP = Vec3{0, VIEWPORT_HEIGHT, 0};
-   constexpr auto LOWER_LEFT_CORNER_VP = ORIGIN - (HORIZONTAL_VP / 2) -
-                                         (VERTICAL_VP / 2) -
-                                         Vec3{0, 0, FOCAL_LENGTH};
+   const Camera camera;
 
    constexpr size_t SAMPLES_PER_PIXEL = 100;
 
@@ -72,8 +62,7 @@ int main()
          {
             auto u = static_cast<double>(x + RandomDouble()) / (IMG_WIDTH - 1);
             auto v = static_cast<double>(IMG_HEIGHT - y - 1 + RandomDouble()) / (IMG_HEIGHT - 1);
-            auto ray = Ray(ORIGIN, LOWER_LEFT_CORNER_VP + (u * HORIZONTAL_VP) +
-                                   (v * VERTICAL_VP) - ORIGIN);
+            auto ray = camera.GetRay(u, v);
             pix_samples.push_back(RayColor(ray, scene));
          }
 
