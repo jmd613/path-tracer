@@ -6,7 +6,7 @@ namespace math {
 
 double Vec3::Length() const
 {
-   return sqrt(pow(x_, 2) + pow(y_, 2) + pow(z_, 2));
+   return sqrt(x_*x_ + y_*y_ + z_*z_);
 }
 
 Vec3 Vec3::Normal() const { return *this / Length(); }

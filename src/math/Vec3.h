@@ -16,6 +16,11 @@ public:
 
    double Length() const;
 
+   constexpr double LengthSquared() const
+   {
+      return x_ * x_ + y_ * y_ + z_ * z_;
+   }
+
    Vec3 Normal() const;
 
    constexpr Vec3 Cross(const Vec3 &other) const
