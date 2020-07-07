@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cassert>
 #include <string>
 #include <vector>
@@ -12,7 +13,10 @@ namespace gfx {
 struct Pixel
 {
    Pixel() = default;
-   constexpr Pixel(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
+   constexpr Pixel(uint8_t r, uint8_t g, uint8_t b) :
+      r(std::clamp(+r, 0, 255)), g(std::clamp(+g, 0, 255)),
+      b(std::clamp(+b, 0, 255))
+   {}
    explicit constexpr Pixel(const math::Vec3 &vec) :
       r(vec.GetX()), g(vec.GetY()), b(vec.GetZ())
    {}
