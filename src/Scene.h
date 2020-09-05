@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "IHittable.h"
+#include "geometry/IHittable.h"
 
 class Scene : public IHittable
 {
