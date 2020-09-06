@@ -14,16 +14,16 @@ math::Vec3 _RandomLambertianVec()
    return {r * cos(a), r * sin(a), z};
 }
 
-std::optional<std::pair<math::Ray, math::Vec3>> Lambertian::Scatter(
-   const math::Ray &ray, const HitRecord &record) const
+std::optional<ReflectRec> Lambertian::Scatter(const math::Ray &ray,
+                                              const HitRecord &record) const
 {
    auto direction = math::Vec3{record.normal + _RandomLambertianVec()};
    auto scattered = math::Ray{record.point, direction};
    return {{scattered, albedo_}};
 }
 
-std::optional<std::pair<math::Ray, math::Vec3>> Metal::Scatter(
-   const math::Ray &ray, const HitRecord &record) const
+std::optional<ReflectRec> Metal::Scatter(const math::Ray &ray,
+                                         const HitRecord &record) const
 {
    auto reflected =
       math::ReflectAcrossNormal(ray.GetDirection(), record.normal);
