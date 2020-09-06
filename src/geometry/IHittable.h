@@ -1,15 +1,19 @@
 #pragma once
 
+#include <memory>
 #include <optional>
 
 #include "Ray.h"
 #include "Vec3.h"
+
+class Material;
 
 struct HitRecord
 {
    math::Vec3 point;
    math::Vec3 normal;
    double dist;
+   std::shared_ptr<Material> mat;
 };
 
 class IHittable

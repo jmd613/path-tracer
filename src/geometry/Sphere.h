@@ -10,7 +10,8 @@ class Sphere : public IHittable
 {
 public:
    Sphere() = delete;
-   Sphere(math::Vec3 origin, double radius) : origin_(origin), radius_(radius)
+   Sphere(math::Vec3 origin, double radius, std::shared_ptr<Material> mat) :
+      origin_(origin), radius_(radius), mat_ptr_(mat)
    {}
 
    std::optional<HitRecord> Hit(const math::Ray &ray, double min_dist,
@@ -22,4 +23,5 @@ public:
 private:
    math::Vec3 origin_;
    double radius_;
+   std::shared_ptr<Material> mat_ptr_;
 };

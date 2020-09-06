@@ -1,3 +1,3 @@
-add_library(material STATIC Material.h)
+add_library(material STATIC Material.cc)
 target_include_directories(material PUBLIC .)
-set_target_properties(material PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(material PUBLIC math geometry)

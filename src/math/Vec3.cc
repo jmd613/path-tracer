@@ -18,6 +18,11 @@ Vec3 RandomVec3(double min, double max)
            RandomDouble(min, max)};
 }
 
+Vec3 ReflectAcrossNormal(const Vec3& vec, const Vec3& norm)
+{
+   return vec - 2 * vec.Dot(norm) * norm;
+}
+
 Vec3 RandomInUnitSphere()
 {
    while (true)

@@ -1,15 +1,15 @@
 #include <limits>
 #include <memory>
 #include <numeric>
-#include <random>
 
 #include "Camera.h"
 #include "Image.h"
+#include "Material.h"
 #include "Ray.h"
 #include "Scene.h"
+#include "Sphere.h"
 #include "Util.h"
 #include "Vec3.h"
-#include "geometry/Sphere.h"
 
 using namespace math;
 using namespace gfx;
@@ -32,8 +32,12 @@ Vec3 RayColor(const Ray &ray, const IHittable &scene, size_t depth)
    constexpr double infinity = std::numeric_limits<double>::infinity();
    if (auto hit = scene.Hit(ray, 0.0001, infinity); hit)
    {
-      auto vec = hit->point + hit->normal + RandomLambertianVec();
-      return 0.5 * RayColor(Ray(hit->point, vec - hit->point), scene, --depth);
+      if (auto rec = hit->mat->Scatter(ray, *hit); rec)
+      {
+         auto &[scattered, attenuation] = *rec;
+         return attenuation * RayColor(scattered, scene, --depth);
+      }
+      return {0, 0, 0};
    }
 
    auto normal = ray.GetDirection().Normal();
@@ -74,15 +78,29 @@ Pixel CalcPixelColor(const Camera &camera, const Scene &scene, size_t x,
 
 int main()
 {
-   constexpr size_t IMG_WIDTH = 640;
-   constexpr size_t IMG_HEIGHT = 480;
+   constexpr size_t IMG_WIDTH = 640u;
+   constexpr size_t IMG_HEIGHT = 480u;
    const Camera camera(IMG_WIDTH, IMG_HEIGHT);
 
-   constexpr size_t SAMPLES_PER_PIXEL = 32;
+   constexpr size_t SAMPLES_PER_PIXEL = 128;
 
    Scene scene;
-   scene.add(std::make_unique<Sphere>(Vec3(0, 0, -1), 0.5));
-   scene.add(std::make_unique<Sphere>(Vec3(0, -100.5, -1), 100));
+   auto material_ground = std::make_shared<Lambertian>(Vec3(0.8, 0.8, 0.0));
+   auto material_center = std::make_shared<Lambertian>(Vec3(0.7, 0.3, 0.3));
+   auto material_left = std::make_shared<Metal>(Vec3(0.8, 0.8, 0.8), 0.2);
+   auto material_right = std::make_shared<Metal>(Vec3(0.8, 0.6, 0.2), 1.0);
+
+   scene.add(std::make_unique<Sphere>(Vec3(0.0, -100.5, -1.0), 100.0,
+                                      material_ground));
+   scene.add(
+      std::make_unique<Sphere>(Vec3(0.0, 0.0, -1.0), 0.5, material_center));
+   scene.add(
+      std::make_unique<Sphere>(Vec3(-1.0, 0.0, -1.0), 0.5, material_left));
+   scene.add(
+      std::make_unique<Sphere>(Vec3(1.0, 0.0, -1.0), 0.5, material_right));
+
+//      scene.add(std::make_unique<Sphere>(Vec3(0, 0, -1), 0.5, material_left));
+//      scene.add(std::make_unique<Sphere>(Vec3(0, -100.5, -1), 100, material_ground));
 
    Image img(IMG_WIDTH, IMG_HEIGHT);
    double current_percent = 0;

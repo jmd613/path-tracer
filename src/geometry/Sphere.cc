@@ -21,5 +21,5 @@ std::optional<HitRecord> Sphere::Hit(const Ray &ray, double min_dist,
 
    double dist = minus_dist > min_dist ? minus_dist : plus_dist;
    auto point = ray.PositionAt(dist);
-   return {HitRecord{point, (point - origin_).Normal(), dist}};
+   return {HitRecord{point, (point - origin_).Normal(), dist, mat_ptr_}};
 }
