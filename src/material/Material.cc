@@ -5,7 +5,7 @@
 #include "IHittable.h"
 #include "Util.h"
 
-math::Vec3 _RandomLambertianVec()
+math::Vec3 RandomLambertianVec()
 {
    double a = math::RandomDouble(0, 2 * M_PI);
    double z = math::RandomDouble(-1, 1);
@@ -17,7 +17,7 @@ math::Vec3 _RandomLambertianVec()
 std::optional<ReflectRec> Lambertian::Scatter(const math::Ray &ray,
                                               const HitRecord &record) const
 {
-   auto direction = math::Vec3{record.normal + _RandomLambertianVec()};
+   auto direction = math::Vec3{record.normal + RandomLambertianVec()};
    auto scattered = math::Ray{record.point, direction};
    return {{scattered, albedo_}};
 }
