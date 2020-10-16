@@ -132,14 +132,8 @@ private:
    double x_, y_, z_;
 };
 
-Vec3 VecFromOriginDirection(const Vec3 &origin, const Vec3 &dir);
-Vec3 RandomVec3();
 Vec3 RandomVec3(double min, double max);
 Vec3 RandomInUnitSphere();
 Vec3 ReflectAcrossNormal(const Vec3& vec, const Vec3& norm);
-
-inline Vec3 GetXNormal() { return {1, 0, 0}; }
-inline Vec3 GetYNormal() { return {0, 1, 0}; }
-inline Vec3 GetZNormal() { return {0, 0, 1}; }
 
 }   // namespace math
